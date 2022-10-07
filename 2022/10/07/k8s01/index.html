@@ -1,241 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  
+{% extends '_layout.swig' %}
+{% import '_macro/post.swig' as post_template %}
+{% import '_macro/sidebar.swig' as sidebar_template %}
 
-  
-  <title>k8s常见报错排查 | echoonly的博客</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="[toc] 6443端口无法访问1234567#查看kubelet服务状态systemctl status kubeletsystemctl start kubelet#如果服务有报错，查看kubelet日志#查看kubectl.services日志journalctl -f -u kubelet.servicejournalctl -xefu kubelet POD node 节点not rea">
-<meta property="og:type" content="article">
-<meta property="og:title" content="k8s常见报错排查">
-<meta property="og:url" content="http://example.com/2022/10/07/k8s01/index.html">
-<meta property="og:site_name" content="echoonly的博客">
-<meta property="og:description" content="[toc] 6443端口无法访问1234567#查看kubelet服务状态systemctl status kubeletsystemctl start kubelet#如果服务有报错，查看kubelet日志#查看kubectl.services日志journalctl -f -u kubelet.servicejournalctl -xefu kubelet POD node 节点not rea">
-<meta property="og:locale">
-<meta property="og:image" content="https://note.youdao.com/yws/res/104290/WEBRESOURCE28cb63bfba341feef987588bc82968c0">
-<meta property="article:published_time" content="2022-10-06T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-10-07T12:10:35.647Z">
-<meta property="article:author" content="Echo Xu">
-<meta property="article:tag" content="云原生">
-<meta property="article:tag" content="k8s">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://note.youdao.com/yws/res/104290/WEBRESOURCE28cb63bfba341feef987588bc82968c0">
-  
-    <link rel="alternate" href="/atom.xml" title="echoonly的博客" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  
-<link rel="stylesheet" href="/css/style.css">
 
-<meta name="generator" content="Hexo 5.4.2"></head>
+{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">echoonly的博客</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main"><article id="post-k8s01" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2022/10/07/k8s01/" class="article-date">
-  <time datetime="2022-10-06T16:00:00.000Z" itemprop="datePublished">2022-10-07</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/k8s/">k8s</a>
-  </div>
+{% block page_class %}page-post-detail{% endblock %}
 
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      k8s常见报错排查
-    </h1>
-  
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>[toc]</p>
-<h2 id="6443端口无法访问"><a href="#6443端口无法访问" class="headerlink" title="6443端口无法访问"></a>6443端口无法访问</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看kubelet服务状态</span></span><br><span class="line">systemctl status kubelet</span><br><span class="line">systemctl start kubelet</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">如果服务有报错，查看kubelet日志</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看kubectl.services日志</span></span><br><span class="line">journalctl -f -u kubelet.service</span><br><span class="line">journalctl -xefu kubelet</span><br></pre></td></tr></table></figure>
-<h2 id="POD-node-节点not-ready"><a href="#POD-node-节点not-ready" class="headerlink" title="POD node 节点not ready"></a>POD node 节点not ready</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#查看pod状态 </span><br><span class="line">kubectl get pods --all-namespaces</span><br><span class="line">kubectl get pods -n kube-system -o wide</span><br><span class="line">#如果任何一个pod不处于Running，用这个命令查看更多信息</span><br><span class="line">kubectl describe pod yourPodName -n kube-system</span><br><span class="line">#您可以通过运行以下命令来访问 pod 日志：</span><br><span class="line">kubectl logs yourPodName -n kube-system</span><br><span class="line"># 查看pod内的容器日志(如果pod里只有一个容器的话不需要-c)</span><br><span class="line">kubectl log PodName -c containerName</span><br></pre></td></tr></table></figure>
-<p>[<a target="_blank" rel="noopener" href="https://www.containiq.com/post/debugging-kubernetes-nodes-in-not-ready-state">这篇英文说的比较全</a>]<br>常用命令 </p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">进入pod</span></span><br><span class="line">kubectl exec YourPodName (-c YourContainerName) -it -- /bin/sh</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">用service把端口服务映射出去</span></span><br><span class="line">kubectl get svc </span><br></pre></td></tr></table></figure>
-<h2 id="证书过期"><a href="#证书过期" class="headerlink" title="证书过期"></a>证书过期</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -in /etc/kubernetes/pki/apiserver.crt -noout -text | grep Not</span><br><span class="line">或</span><br><span class="line">kubeadm alpha certs check-expiration</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">如果遇到 openssl: error while loading shared libraries: libssl.so.1.1: cannot open shared object file</span><br><span class="line">查找一下libssl.so.1.1的位置，然后连接到/usr/lib64/libssl.so.1.1即可。如下我的位置是在/usr/local/lib64/libssl.so.1.1，连接到/usr/lib64/libssl.so.1.1就可以了。</span><br><span class="line">[root@localhost ~]# find / -name libssl.so.1.1</span><br><span class="line">/usr/local/lib64/libssl.so.1.1</span><br><span class="line">[root@localhost ~]# ln -s /usr/local/lib64/libssl.so.1.1  /usr/lib64/libssl.so.1.1</span><br><span class="line">[root@localhost ~]# ln -s /usr/local/lib64/libcrypto.so.1.1  /usr/lib64/libcrypto.so.1.1</span><br><span class="line">[root@localhost ~]# openssl version</span><br><span class="line">OpenSSL 1.1.1  11 Sep 2018</span><br></pre></td></tr></table></figure>
+{% block content %}
 
-<p>果然到期了<br><img src="https://note.youdao.com/yws/res/104290/WEBRESOURCE28cb63bfba341feef987588bc82968c0" alt="image.png"><br>延长十年的脚本<br><code>chmod+x</code> 运行命令  <code>./update-kubeadm-cert.sh all</code><br>重启<code>systemctl restart kubelet</code></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">脚本转载自https://github.com/yuyicai/update-kube-cert</span></span><br><span class="line"></span><br><span class="line">set -o errexit</span><br><span class="line">set -o pipefail</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">set</span> -o xtrace</span></span><br><span class="line"></span><br><span class="line">log::err() &#123;</span><br><span class="line">  printf &quot;[$(date +&#x27;%Y-%m-%dT%H:%M:%S.%N%z&#x27;)]: \033[31mERROR: \033[0m$@\n&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">log::info() &#123;</span><br><span class="line">  printf &quot;[$(date +&#x27;%Y-%m-%dT%H:%M:%S.%N%z&#x27;)]: \033[32mINFO: \033[0m$@\n&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">log::warning() &#123;</span><br><span class="line">  printf &quot;[$(date +&#x27;%Y-%m-%dT%H:%M:%S.%N%z&#x27;)]: \033[33mWARNING: \033[0m$@\n&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">check_file() &#123;</span><br><span class="line">  if [[ ! -r  $&#123;1&#125; ]]; then</span><br><span class="line">    log::err &quot;can not find $&#123;1&#125;&quot;</span><br><span class="line">    exit 1</span><br><span class="line">  fi</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">get x509v3 subject alternative name from the old certificate</span></span><br><span class="line">cert::get_subject_alt_name() &#123;</span><br><span class="line">  local cert=$&#123;1&#125;.crt</span><br><span class="line">  check_file &quot;$&#123;cert&#125;&quot;</span><br><span class="line">  local alt_name=$(openssl x509 -text -noout -in $&#123;cert&#125; | grep -A1 &#x27;Alternative&#x27; | tail -n1 | sed &#x27;s/[[:space:]]*Address//g&#x27;)</span><br><span class="line">  printf &quot;$&#123;alt_name&#125;\n&quot;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">get subject from the old certificate</span></span><br><span class="line">cert::get_subj() &#123;</span><br><span class="line">  local cert=$&#123;1&#125;.crt</span><br><span class="line">  check_file &quot;$&#123;cert&#125;&quot;</span><br><span class="line">  local subj=$(openssl x509 -text -noout -in $&#123;cert&#125;  | grep &quot;Subject:&quot; | sed &#x27;s/Subject:/\//g;s/\,/\//;s/[[:space:]]//g&#x27;)</span><br><span class="line">  printf &quot;$&#123;subj&#125;\n&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cert::backup_file() &#123;</span><br><span class="line">  local file=$&#123;1&#125;</span><br><span class="line">  if [[ ! -e $&#123;file&#125;.old-$(date +%Y%m%d) ]]; then</span><br><span class="line">    cp -rp $&#123;file&#125; $&#123;file&#125;.old-$(date +%Y%m%d)</span><br><span class="line">    log::info &quot;backup $&#123;file&#125; to $&#123;file&#125;.old-$(date +%Y%m%d)&quot;</span><br><span class="line">  else</span><br><span class="line">    log::warning &quot;does not backup, $&#123;file&#125;.old-$(date +%Y%m%d) already exists&quot;</span><br><span class="line">  fi</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">generate certificate whit client, server or peer</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Args:</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">  <span class="variable">$1</span> (the name of certificate)</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">  <span class="variable">$2</span> (the <span class="built_in">type</span> of certificate, must be one of client, server, peer)</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">  <span class="variable">$3</span> (the subject of certificates)</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">  <span class="variable">$4</span> (the validity of certificates) (days)</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">  <span class="variable">$5</span> (the x509v3 subject alternative name of certificate when the <span class="built_in">type</span> of certificate is server or peer)</span></span><br><span class="line">cert::gen_cert() &#123;</span><br><span class="line">  local cert_name=$&#123;1&#125;</span><br><span class="line">  local cert_type=$&#123;2&#125;</span><br><span class="line">  local subj=$&#123;3&#125;</span><br><span class="line">  local cert_days=$&#123;4&#125;</span><br><span class="line">  local alt_name=$&#123;5&#125;</span><br><span class="line">  local cert=$&#123;cert_name&#125;.crt</span><br><span class="line">  local key=$&#123;cert_name&#125;.key</span><br><span class="line">  local csr=$&#123;cert_name&#125;.csr</span><br><span class="line">  local csr_conf=&quot;distinguished_name = dn\n[dn]\n[v3_ext]\nkeyUsage = critical, digitalSignature, keyEncipherment\n&quot;</span><br><span class="line"></span><br><span class="line">  check_file &quot;$&#123;key&#125;&quot;</span><br><span class="line">  check_file &quot;$&#123;cert&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">backup certificate when certificate not <span class="keyword">in</span> <span class="variable">$&#123;kubeconf_arr[@]&#125;</span></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">kubeconf_arr=(<span class="string">&quot;controller-manager.crt&quot;</span> <span class="string">&quot;scheduler.crt&quot;</span> <span class="string">&quot;admin.crt&quot;</span> <span class="string">&quot;kubelet.crt&quot;</span>)</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash"><span class="keyword">if</span> [[ ! <span class="string">&quot;<span class="variable">$&#123;kubeconf_arr[@]&#125;</span>&quot;</span> =~ <span class="string">&quot;<span class="variable">$&#123;cert##*/&#125;</span>&quot;</span> ]]; <span class="keyword">then</span></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">  cert::backup_file <span class="string">&quot;<span class="variable">$&#123;cert&#125;</span>&quot;</span></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash"><span class="keyword">fi</span></span></span><br><span class="line"></span><br><span class="line">  case &quot;$&#123;cert_type&#125;&quot; in</span><br><span class="line">    client)</span><br><span class="line">      openssl req -new  -key $&#123;key&#125; -subj &quot;$&#123;subj&#125;&quot; -reqexts v3_ext \</span><br><span class="line">        -config &lt;(printf &quot;$&#123;csr_conf&#125; extendedKeyUsage = clientAuth\n&quot;) -out $&#123;csr&#125;</span><br><span class="line">      openssl x509 -in $&#123;csr&#125; -req -CA $&#123;CA_CERT&#125; -CAkey $&#123;CA_KEY&#125; -CAcreateserial -extensions v3_ext \</span><br><span class="line">        -extfile &lt;(printf &quot;$&#123;csr_conf&#125; extendedKeyUsage = clientAuth\n&quot;) -days $&#123;cert_days&#125; -out $&#123;cert&#125;</span><br><span class="line">      log::info &quot;generated $&#123;cert&#125;&quot;</span><br><span class="line">    ;;</span><br><span class="line">    server)</span><br><span class="line">      openssl req -new  -key $&#123;key&#125; -subj &quot;$&#123;subj&#125;&quot; -reqexts v3_ext \</span><br><span class="line">        -config &lt;(printf &quot;$&#123;csr_conf&#125; extendedKeyUsage = serverAuth\nsubjectAltName = $&#123;alt_name&#125;\n&quot;) -out $&#123;csr&#125;</span><br><span class="line">      openssl x509 -in $&#123;csr&#125; -req -CA $&#123;CA_CERT&#125; -CAkey $&#123;CA_KEY&#125; -CAcreateserial -extensions v3_ext \</span><br><span class="line">        -extfile &lt;(printf &quot;$&#123;csr_conf&#125; extendedKeyUsage = serverAuth\nsubjectAltName = $&#123;alt_name&#125;\n&quot;) -days $&#123;cert_days&#125; -out $&#123;cert&#125;</span><br><span class="line">      log::info &quot;generated $&#123;cert&#125;&quot;</span><br><span class="line">    ;;</span><br><span class="line">    peer)</span><br><span class="line">      openssl req -new  -key $&#123;key&#125; -subj &quot;$&#123;subj&#125;&quot; -reqexts v3_ext \</span><br><span class="line">        -config &lt;(printf &quot;$&#123;csr_conf&#125; extendedKeyUsage = serverAuth, clientAuth\nsubjectAltName = $&#123;alt_name&#125;\n&quot;) -out $&#123;csr&#125;</span><br><span class="line">      openssl x509 -in $&#123;csr&#125; -req -CA $&#123;CA_CERT&#125; -CAkey $&#123;CA_KEY&#125; -CAcreateserial -extensions v3_ext \</span><br><span class="line">        -extfile &lt;(printf &quot;$&#123;csr_conf&#125; extendedKeyUsage = serverAuth, clientAuth\nsubjectAltName = $&#123;alt_name&#125;\n&quot;) -days $&#123;cert_days&#125; -out $&#123;cert&#125;</span><br><span class="line">      log::info &quot;generated $&#123;cert&#125;&quot;</span><br><span class="line">    ;;</span><br><span class="line">    *)</span><br><span class="line">      log::err &quot;unknow, unsupported etcd certs type: $&#123;cert_type&#125;, supported type: client, server, peer&quot;</span><br><span class="line">      exit 1</span><br><span class="line">  esac</span><br><span class="line"></span><br><span class="line">  rm -f $&#123;csr&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cert::update_kubeconf() &#123;</span><br><span class="line">  local cert_name=$&#123;1&#125;</span><br><span class="line">  local kubeconf_file=$&#123;cert_name&#125;.conf</span><br><span class="line">  local cert=$&#123;cert_name&#125;.crt</span><br><span class="line">  local key=$&#123;cert_name&#125;.key</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate  certificate</span></span><br><span class="line">  check_file $&#123;kubeconf_file&#125;</span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">get the key from the old kubeconf</span></span><br><span class="line">  grep &quot;client-key-data&quot; $&#123;kubeconf_file&#125; | awk &#123;&#x27;print$2&#x27;&#125; | base64 -d &gt; $&#123;key&#125;</span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">get the old certificate from the old kubeconf</span></span><br><span class="line">  grep &quot;client-certificate-data&quot; $&#123;kubeconf_file&#125; | awk &#123;&#x27;print$2&#x27;&#125; | base64 -d &gt; $&#123;cert&#125;</span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">get subject from the old certificate</span></span><br><span class="line">  local subj=$(cert::get_subj $&#123;cert_name&#125;)</span><br><span class="line">  cert::gen_cert &quot;$&#123;cert_name&#125;&quot; &quot;client&quot; &quot;$&#123;subj&#125;&quot; &quot;$&#123;CAER_DAYS&#125;&quot;</span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">get certificate <span class="built_in">base64</span> code</span></span><br><span class="line">  local cert_base64=$(base64 -w 0 $&#123;cert&#125;)</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">backup kubeconf</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">cert::backup_file <span class="string">&quot;<span class="variable">$&#123;kubeconf_file&#125;</span>&quot;</span></span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash"><span class="built_in">set</span> certificate <span class="built_in">base64</span> code to kubeconf</span></span><br><span class="line">  sed -i &#x27;s/client-certificate-data:.*/client-certificate-data: &#x27;$&#123;cert_base64&#125;&#x27;/g&#x27; $&#123;kubeconf_file&#125;</span><br><span class="line"></span><br><span class="line">  log::info &quot;generated new $&#123;kubeconf_file&#125;&quot;</span><br><span class="line">  rm -f $&#123;cert&#125;</span><br><span class="line">  rm -f $&#123;key&#125;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash"><span class="built_in">set</span> config <span class="keyword">for</span> kubectl</span></span><br><span class="line">  if [[ $&#123;cert_name##*/&#125; == &quot;admin&quot; ]]; then</span><br><span class="line">    mkdir -p ~/.kube</span><br><span class="line">    cp -fp $&#123;kubeconf_file&#125; ~/.kube/config</span><br><span class="line">    log::info &quot;copy the admin.conf to ~/.kube/config for kubectl&quot;</span><br><span class="line">  fi</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cert::update_etcd_cert() &#123;</span><br><span class="line">  PKI_PATH=$&#123;KUBE_PATH&#125;/pki/etcd</span><br><span class="line">  CA_CERT=$&#123;PKI_PATH&#125;/ca.crt</span><br><span class="line">  CA_KEY=$&#123;PKI_PATH&#125;/ca.key</span><br><span class="line"></span><br><span class="line">  check_file &quot;$&#123;CA_CERT&#125;&quot;</span><br><span class="line">  check_file &quot;$&#123;CA_KEY&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate etcd server certificate</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">/etc/kubernetes/pki/etcd/server</span></span><br><span class="line">  CART_NAME=$&#123;PKI_PATH&#125;/server</span><br><span class="line">  subject_alt_name=$(cert::get_subject_alt_name $&#123;CART_NAME&#125;)</span><br><span class="line">  cert::gen_cert &quot;$&#123;CART_NAME&#125;&quot; &quot;peer&quot; &quot;/CN=etcd-server&quot; &quot;$&#123;CAER_DAYS&#125;&quot; &quot;$&#123;subject_alt_name&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate etcd peer certificate</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">/etc/kubernetes/pki/etcd/peer</span></span><br><span class="line">  CART_NAME=$&#123;PKI_PATH&#125;/peer</span><br><span class="line">  subject_alt_name=$(cert::get_subject_alt_name $&#123;CART_NAME&#125;)</span><br><span class="line">  cert::gen_cert &quot;$&#123;CART_NAME&#125;&quot; &quot;peer&quot; &quot;/CN=etcd-peer&quot; &quot;$&#123;CAER_DAYS&#125;&quot; &quot;$&#123;subject_alt_name&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate etcd healthcheck-client certificate</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">/etc/kubernetes/pki/etcd/healthcheck-client</span></span><br><span class="line">  CART_NAME=$&#123;PKI_PATH&#125;/healthcheck-client</span><br><span class="line">  cert::gen_cert &quot;$&#123;CART_NAME&#125;&quot; &quot;client&quot; &quot;/O=system:masters/CN=kube-etcd-healthcheck-client&quot; &quot;$&#123;CAER_DAYS&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate apiserver-etcd-client certificate</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">/etc/kubernetes/pki/apiserver-etcd-client</span></span><br><span class="line">  check_file &quot;$&#123;CA_CERT&#125;&quot;</span><br><span class="line">  check_file &quot;$&#123;CA_KEY&#125;&quot;</span><br><span class="line">  PKI_PATH=$&#123;KUBE_PATH&#125;/pki</span><br><span class="line">  CART_NAME=$&#123;PKI_PATH&#125;/apiserver-etcd-client</span><br><span class="line">  cert::gen_cert &quot;$&#123;CART_NAME&#125;&quot; &quot;client&quot; &quot;/O=system:masters/CN=kube-apiserver-etcd-client&quot; &quot;$&#123;CAER_DAYS&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">restart etcd</span></span><br><span class="line">  docker ps | awk &#x27;/k8s_etcd/&#123;print$1&#125;&#x27; | xargs -r -I &#x27;&#123;&#125;&#x27; docker restart &#123;&#125; || true</span><br><span class="line">  log::info &quot;restarted etcd&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cert::update_master_cert() &#123;</span><br><span class="line">  PKI_PATH=$&#123;KUBE_PATH&#125;/pki</span><br><span class="line">  CA_CERT=$&#123;PKI_PATH&#125;/ca.crt</span><br><span class="line">  CA_KEY=$&#123;PKI_PATH&#125;/ca.key</span><br><span class="line"></span><br><span class="line">  check_file &quot;$&#123;CA_CERT&#125;&quot;</span><br><span class="line">  check_file &quot;$&#123;CA_KEY&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate apiserver server certificate</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">/etc/kubernetes/pki/apiserver</span></span><br><span class="line">  CART_NAME=$&#123;PKI_PATH&#125;/apiserver</span><br><span class="line">  subject_alt_name=$(cert::get_subject_alt_name $&#123;CART_NAME&#125;)</span><br><span class="line">  cert::gen_cert &quot;$&#123;CART_NAME&#125;&quot; &quot;server&quot; &quot;/CN=kube-apiserver&quot; &quot;$&#123;CAER_DAYS&#125;&quot; &quot;$&#123;subject_alt_name&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate apiserver-kubelet-client certificate</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">/etc/kubernetes/pki/apiserver-kubelet-client</span></span><br><span class="line">  CART_NAME=$&#123;PKI_PATH&#125;/apiserver-kubelet-client</span><br><span class="line">  cert::gen_cert &quot;$&#123;CART_NAME&#125;&quot; &quot;client&quot; &quot;/O=system:masters/CN=kube-apiserver-kubelet-client&quot; &quot;$&#123;CAER_DAYS&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate kubeconf <span class="keyword">for</span> controller-manager,scheduler,kubectl and kubelet</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">/etc/kubernetes/controller-manager,scheduler,admin,kubelet.conf</span></span><br><span class="line">  cert::update_kubeconf &quot;$&#123;KUBE_PATH&#125;/controller-manager&quot;</span><br><span class="line">  cert::update_kubeconf &quot;$&#123;KUBE_PATH&#125;/scheduler&quot;</span><br><span class="line">  cert::update_kubeconf &quot;$&#123;KUBE_PATH&#125;/admin&quot;</span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">check kubelet.conf</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">https://github.com/kubernetes/kubeadm/issues/1753</span></span><br><span class="line">  set +e</span><br><span class="line">  grep kubelet-client-current.pem /etc/kubernetes/kubelet.conf &gt; /dev/null 2&gt;&amp;1</span><br><span class="line">  kubelet_cert_auto_update=$?</span><br><span class="line">  set -e</span><br><span class="line">  if [[ &quot;$kubelet_cert_auto_update&quot; == &quot;0&quot; ]]; then</span><br><span class="line">    log::warning &quot;does not need to update kubelet.conf&quot;</span><br><span class="line">  else</span><br><span class="line">    cert::update_kubeconf &quot;$&#123;KUBE_PATH&#125;/kubelet&quot;</span><br><span class="line">  fi</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">generate front-proxy-client certificate</span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">use front-proxy-client ca</span></span><br><span class="line">  CA_CERT=$&#123;PKI_PATH&#125;/front-proxy-ca.crt</span><br><span class="line">  CA_KEY=$&#123;PKI_PATH&#125;/front-proxy-ca.key</span><br><span class="line">  check_file &quot;$&#123;CA_CERT&#125;&quot;</span><br><span class="line">  check_file &quot;$&#123;CA_KEY&#125;&quot;</span><br><span class="line">  CART_NAME=$&#123;PKI_PATH&#125;/front-proxy-client</span><br><span class="line">  cert::gen_cert &quot;$&#123;CART_NAME&#125;&quot; &quot;client&quot; &quot;/CN=front-proxy-client&quot; &quot;$&#123;CAER_DAYS&#125;&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">restart apiserve, controller-manager, scheduler and kubelet</span></span><br><span class="line">  docker ps | awk &#x27;/k8s_kube-apiserver/&#123;print$1&#125;&#x27; | xargs -r -I &#x27;&#123;&#125;&#x27; docker restart &#123;&#125; || true</span><br><span class="line">  log::info &quot;restarted kube-apiserver&quot;</span><br><span class="line">  docker ps | awk &#x27;/k8s_kube-controller-manager/&#123;print$1&#125;&#x27; | xargs -r -I &#x27;&#123;&#125;&#x27; docker restart &#123;&#125; || true</span><br><span class="line">  log::info &quot;restarted kube-controller-manager&quot;</span><br><span class="line">  docker ps | awk &#x27;/k8s_kube-scheduler/&#123;print$1&#125;&#x27; | xargs -r -I &#x27;&#123;&#125;&#x27; docker restart &#123;&#125; || true</span><br><span class="line">  log::info &quot;restarted kube-scheduler&quot;</span><br><span class="line">  systemctl restart kubelet</span><br><span class="line">  log::info &quot;restarted kubelet&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main() &#123;</span><br><span class="line">  local node_tpye=$1</span><br><span class="line">  </span><br><span class="line">  KUBE_PATH=/etc/kubernetes</span><br><span class="line">  CAER_DAYS=3650</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">  # </span><span class="language-bash">backup <span class="variable">$KUBE_PATH</span> to <span class="variable">$KUBE_PATH</span>.old-$(<span class="built_in">date</span> +%Y%m%d)</span></span><br><span class="line">  cert::backup_file &quot;$&#123;KUBE_PATH&#125;&quot;</span><br><span class="line"></span><br><span class="line">  case $&#123;node_tpye&#125; in</span><br><span class="line">    etcd)</span><br><span class="line"><span class="meta prompt_">	  # </span><span class="language-bash">update etcd certificates</span></span><br><span class="line">      cert::update_etcd_cert</span><br><span class="line">    ;;</span><br><span class="line">    master)</span><br><span class="line"><span class="meta prompt_">	  # </span><span class="language-bash">update master certificates and kubeconf</span></span><br><span class="line">      cert::update_master_cert</span><br><span class="line">    ;;</span><br><span class="line">    all)</span><br><span class="line">      # update etcd certificates</span><br><span class="line">      cert::update_etcd_cert</span><br><span class="line">      # update master certificates and kubeconf</span><br><span class="line">      cert::update_master_cert</span><br><span class="line">    ;;</span><br><span class="line">    *)</span><br><span class="line">      log::err &quot;unknow, unsupported certs type: $&#123;cert_type&#125;, supported type: all, etcd, master&quot;</span><br><span class="line">      printf &quot;Documentation: https://github.com/yuyicai/update-kube-cert</span><br><span class="line">  example:</span><br><span class="line">    &#x27;\033[32m./update-kubeadm-cert.sh all\033[0m&#x27; update all etcd certificates, master certificates and kubeconf</span><br><span class="line">      /etc/kubernetes</span><br><span class="line">      ├── admin.conf</span><br><span class="line">      ├── controller-manager.conf</span><br><span class="line">      ├── scheduler.conf</span><br><span class="line">      ├── kubelet.conf</span><br><span class="line">      └── pki</span><br><span class="line">          ├── apiserver.crt</span><br><span class="line">          ├── apiserver-etcd-client.crt</span><br><span class="line">          ├── apiserver-kubelet-client.crt</span><br><span class="line">          ├── front-proxy-client.crt</span><br><span class="line">          └── etcd</span><br><span class="line">              ├── healthcheck-client.crt</span><br><span class="line">              ├── peer.crt</span><br><span class="line">              └── server.crt</span><br><span class="line"></span><br><span class="line">    &#x27;\033[32m./update-kubeadm-cert.sh etcd\033[0m&#x27; update only etcd certificates</span><br><span class="line">      /etc/kubernetes</span><br><span class="line">      └── pki</span><br><span class="line">          ├── apiserver-etcd-client.crt</span><br><span class="line">          └── etcd</span><br><span class="line">              ├── healthcheck-client.crt</span><br><span class="line">              ├── peer.crt</span><br><span class="line">              └── server.crt</span><br><span class="line"></span><br><span class="line">    &#x27;\033[32m./update-kubeadm-cert.sh master\033[0m&#x27; update only master certificates and kubeconf</span><br><span class="line">      /etc/kubernetes</span><br><span class="line">      ├── admin.conf</span><br><span class="line">      ├── controller-manager.conf</span><br><span class="line">      ├── scheduler.conf</span><br><span class="line">      ├── kubelet.conf</span><br><span class="line">      └── pki</span><br><span class="line">          ├── apiserver.crt</span><br><span class="line">          ├── apiserver-kubelet-client.crt</span><br><span class="line">          └── front-proxy-client.crt</span><br><span class="line">&quot;</span><br><span class="line">      exit 1</span><br><span class="line">    esac</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main &quot;$@&quot;</span><br></pre></td></tr></table></figure>
+  <div id="posts" class="posts-expand">
+    {{ post_template.render(page) }}
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2022/10/07/k8s01/" data-id="cl8yhlvix0001jfumhspz3ypk" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/k8s/" rel="tag">k8s</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="tag">云原生</a></li></ul>
-
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-    <a href="/2022/10/07/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          Hello World
-        
-      </div>
-    </a>
-  
-  
-</nav>
-
-  
-</article>
-
-</section>
-        
-          <aside id="sidebar">
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/k8s/">k8s</a></li></ul>
+    <div class="post-spread">
+      {% if theme.jiathis %}
+        {% include '_partials/share/jiathis.swig' %}
+      {% elseif theme.baidushare %}
+        {% include '_partials/share/baidushare.swig' %}
+      {% elseif theme.add_this_id %}
+        {% include '_partials/share/add-this.swig' %}
+      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
+        {% include '_partials/share/duoshuo_share.swig' %}
+      {% endif %}
     </div>
   </div>
 
+{% endblock %}
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/k8s/" rel="tag">k8s</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" rel="tag">云原生</a></li></ul>
-    </div>
-  </div>
+{% block sidebar %}
+  {{ sidebar_template.render(true) }}
+{% endblock %}
 
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/k8s/" style="font-size: 10px;">k8s</a> <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 10px;">云原生</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2022/10/07/hello-world/">Hello World</a>
-          </li>
-        
-          <li>
-            <a href="/2022/10/07/k8s01/">k8s常见报错排查</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2022 Echo Xu<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-
-
-  
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-
-  
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
-
-
-
-
-<script src="/js/script.js"></script>
-
-
-
-
-  </div>
-</body>
-</html>
+{% block script_extra %}
+  {% include '_scripts/pages/post-details.swig' %}
+{% endblock %}
