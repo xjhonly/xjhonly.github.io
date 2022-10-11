@@ -79,16 +79,16 @@
 
 
 
-<meta name="description" content="6443端口无法访问1234567#查看kubelet服务状态systemctl status kubeletsystemctl start kubelet#如果服务有报错，查看kubelet日志#查看kubectl.services日志journalctl -f -u kubelet.servicejournalctl -xefu kubelet POD node 节点not ready1234">
+<meta name="description" content="记录下3种常见的k8s报错: 6443(API Server)异常、POD异常、证书过期">
 <meta property="og:type" content="article">
 <meta property="og:title" content="k8s常见报错排查">
 <meta property="og:url" content="http://example.com/2022/10/07/k8s01/index.html">
 <meta property="og:site_name" content="echoonly的博客">
-<meta property="og:description" content="6443端口无法访问1234567#查看kubelet服务状态systemctl status kubeletsystemctl start kubelet#如果服务有报错，查看kubelet日志#查看kubectl.services日志journalctl -f -u kubelet.servicejournalctl -xefu kubelet POD node 节点not ready1234">
+<meta property="og:description" content="记录下3种常见的k8s报错: 6443(API Server)异常、POD异常、证书过期">
 <meta property="og:locale">
 <meta property="og:image" content="http://example.com/2022/10/07/k8s01/expired.png">
 <meta property="article:published_time" content="2022-10-06T16:00:00.000Z">
-<meta property="article:modified_time" content="2022-10-10T02:46:41.254Z">
+<meta property="article:modified_time" content="2022-10-11T08:20:53.213Z">
 <meta property="article:author" content="Echo Xu">
 <meta property="article:tag" content="云原生">
 <meta property="article:tag" content="k8s">
@@ -103,7 +103,7 @@
     root: '',
     scheme: 'Pisces',
     version: '5.1.4',
-    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":true,"onmobile":false},
     fancybox: true,
     tabs: true,
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
@@ -345,7 +345,10 @@
       
 
       
-        <h2 id="6443端口无法访问"><a href="#6443端口无法访问" class="headerlink" title="6443端口无法访问"></a>6443端口无法访问</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看kubelet服务状态</span></span><br><span class="line">systemctl status kubelet</span><br><span class="line">systemctl start kubelet</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">如果服务有报错，查看kubelet日志</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看kubectl.services日志</span></span><br><span class="line">journalctl -f -u kubelet.service</span><br><span class="line">journalctl -xefu kubelet</span><br></pre></td></tr></table></figure>
+        <p>记录下3种常见的k8s报错: <strong>6443(API Server)异常</strong>、<strong>POD异常</strong>、<strong>证书过期</strong>       </p>
+<span id="more"></span>
+
+<h2 id="6443端口无法访问"><a href="#6443端口无法访问" class="headerlink" title="6443端口无法访问"></a>6443端口无法访问</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看kubelet服务状态</span></span><br><span class="line">systemctl status kubelet</span><br><span class="line">systemctl start kubelet</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">如果服务有报错，查看kubelet日志</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">查看kubectl.services日志</span></span><br><span class="line">journalctl -f -u kubelet.service</span><br><span class="line">journalctl -xefu kubelet</span><br></pre></td></tr></table></figure>
 <h2 id="POD-node-节点not-ready"><a href="#POD-node-节点not-ready" class="headerlink" title="POD node 节点not ready"></a>POD node 节点not ready</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#查看pod状态 </span><br><span class="line">kubectl get pods --all-namespaces</span><br><span class="line">kubectl get pods -n kube-system -o wide</span><br><span class="line">#如果任何一个pod不处于Running，用这个命令查看更多信息</span><br><span class="line">kubectl describe pod yourPodName -n kube-system</span><br><span class="line">#您可以通过运行以下命令来访问 pod 日志：</span><br><span class="line">kubectl logs yourPodName -n kube-system</span><br><span class="line"># 查看pod内的容器日志(如果pod里只有一个容器的话不需要-c)</span><br><span class="line">kubectl log PodName -c containerName</span><br></pre></td></tr></table></figure>
 <p>[<a target="_blank" rel="noopener" href="https://www.containiq.com/post/debugging-kubernetes-nodes-in-not-ready-state">这篇英文说的比较全</a>]<br>常用命令 </p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">进入pod</span></span><br><span class="line">kubectl exec YourPodName (-c YourContainerName) -it -- /bin/sh</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">用service把端口服务映射出去</span></span><br><span class="line">kubectl get svc </span><br></pre></td></tr></table></figure>
@@ -585,6 +588,8 @@
     
       <div class="back-to-top">
         <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
         
       </div>
     
